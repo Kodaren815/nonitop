@@ -11,7 +11,7 @@ export const outerFabrics: Fabric[] = [
   { id: 'blomster', name: 'Blomster', image: '/images/fabrics/Blomster.jpg' },
   { id: 'noel', name: 'Noel', image: '/images/fabrics/Joel.jpg' },
   { id: 'olivia', name: 'Olivia', image: '/images/fabrics/Olivia.jpg' },
-  { id: 'anki', name: 'Anki', image: '/images/fabrics/anki-placeholder.svg' },
+  { id: 'anki', name: 'Anki', image: '/images/fabrics/Anki.jpg' },
   { id: 'jennifer', name: 'Jennifer', image: '/images/fabrics/Jennifer.jpg' },
   { id: 'bernie', name: 'Bernie', image: '/images/fabrics/Bernie.jpg' },
   { id: 'sonia', name: 'Sonia', image: '/images/fabrics/Sonia.jpg' },
