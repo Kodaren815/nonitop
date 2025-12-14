@@ -1,0 +1,103 @@
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import {
+  getProductBySlug,
+  getAvailableFabricsForProduct,
+  outerFabrics,
+  innerFabrics,
+} from '@/lib/products';
+import ProductDetailClient from './ProductDetailClient';
+
+interface ProductPageProps {
+  params: { slug: string };
+}
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://nonito.se';
+
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const product = getProductBySlug(params.slug);
+  
+  if (!product) {
+    return {
+      title: 'Produkt hittades inte',
+    };
+  }
+
+  const productUrl = `${siteUrl}/produkter/${product.slug}`;
+
+  return {
+    title: product.name,
+    description: product.shortDescription || product.description.substring(0, 160),
+    alternates: {
+      canonical: productUrl,
+    },
+    openGraph: {
+      title: product.name,
+      description: product.shortDescription || product.description.substring(0, 160),
+      url: productUrl,
+      type: 'website',
+      images: product.images && product.images.length > 0 ? [{ url: product.images[0], alt: product.name }] : [],
+    },
+  };
+}
+
+// Generate JSON-LD structured data for SEO
+function generateProductJsonLd(product: {
+  name: string;
+  description: string;
+  price: number;
+  currency: string;
+  images?: string[];
+  slug: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description,
+    image: product.images || [],
+    url: `${siteUrl}/produkter/${product.slug}`,
+    offers: {
+      '@type': 'Offer',
+      price: product.price,
+      priceCurrency: product.currency,
+      availability: 'https://schema.org/InStock',
+      seller: {
+        '@type': 'Organization',
+        name: 'Nonito',
+      },
+    },
+    brand: {
+      '@type': 'Brand',
+      name: 'Nonito',
+    },
+  };
+}
+
+export default function ProductPage({ params }: ProductPageProps) {
+  // Get hardcoded product
+  const product = getProductBySlug(params.slug);
+
+  if (!product) {
+    notFound();
+  }
+
+  const availableFabrics = getAvailableFabricsForProduct(product);
+  const jsonLd = generateProductJsonLd(product);
+
+  return (
+    <>
+      {/* JSON-LD Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ProductDetailClient
+        product={product}
+        availableFabrics={availableFabrics}
+        outerFabrics={outerFabrics}
+        innerFabrics={innerFabrics}
+      />
+    </>
+  );
+}
