@@ -4,6 +4,8 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # Tell Netlify that NEXT_PUBLIC_SITE_URL is intentionally public
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SITE_URL"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
