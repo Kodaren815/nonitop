@@ -3,14 +3,15 @@
  * Secure CRUD operations for product management
  */
 
-// Type for the neon query function
-type NeonQueryFunction = any;
+import { neon } from '@neondatabase/serverless';
+
+// Type for the neon query function that returns arrays
+type SqlFunction = (strings: TemplateStringsArray, ...values: any[]) => Promise<any[]>;
 
 /**
- * Get SQL instance with dynamic import and error handling
- * Uses dynamic import to prevent build-time errors
+ * Get SQL instance with error handling
  */
-async function getSql(): Promise<NeonQueryFunction | null> {
+function getSql(): SqlFunction | null {
   const dbUrl = process.env.NETLIFY_DATABASE_URL || process.env.DATABASE_URL;
   
   // Skip if no valid URL - covers build time when URL might not be set or is invalid
@@ -19,9 +20,7 @@ async function getSql(): Promise<NeonQueryFunction | null> {
   }
   
   try {
-    // Import directly from @neondatabase/serverless with the connection string
-    const { neon } = await import('@neondatabase/serverless');
-    return neon(dbUrl);
+    return neon(dbUrl) as SqlFunction;
   } catch (error) {
     console.warn('Database not available');
     return null;
@@ -105,7 +104,7 @@ function validateProductData(data: CreateProductData): { valid: boolean; error?:
  * Get all products for admin (including inactive)
  */
 export async function getAllAdminProducts(): Promise<AdminProduct[]> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) return [];
   
   const products = await sql`
@@ -166,7 +165,7 @@ export async function getAllAdminProducts(): Promise<AdminProduct[]> {
  * Get single product by ID for admin
  */
 export async function getAdminProductById(id: number): Promise<AdminProduct | null> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) return null;
   
   const products = await sql`
@@ -225,7 +224,7 @@ export async function getAdminProductById(id: number): Promise<AdminProduct | nu
  * Create a new product
  */
 export async function createProduct(data: CreateProductData): Promise<{ success: boolean; id?: number; error?: string }> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) {
     return { success: false, error: 'Database not available' };
   }
@@ -293,7 +292,7 @@ export async function createProduct(data: CreateProductData): Promise<{ success:
  * Update an existing product
  */
 export async function updateProduct(id: number, data: UpdateProductData): Promise<{ success: boolean; error?: string }> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) {
     return { success: false, error: 'Database not available' };
   }
@@ -399,7 +398,7 @@ export async function updateProduct(id: number, data: UpdateProductData): Promis
  * Delete a product (soft delete by setting inactive, or hard delete)
  */
 export async function deleteProduct(id: number, hard: boolean = false): Promise<{ success: boolean; error?: string }> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) {
     return { success: false, error: 'Database not available' };
   }
@@ -423,7 +422,7 @@ export async function deleteProduct(id: number, hard: boolean = false): Promise<
  * Get all fabrics for admin selection
  */
 export async function getAllFabrics(): Promise<{ id: number; slug: string; name: string; imageUrl: string; type: string }[]> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) return [];
   
   const fabrics = await sql`
@@ -439,7 +438,7 @@ export async function getAllFabrics(): Promise<{ id: number; slug: string; name:
  * Update product stock
  */
 export async function updateProductStock(id: number, stock: number): Promise<{ success: boolean; error?: string }> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) {
     return { success: false, error: 'Database not available' };
   }
@@ -460,7 +459,7 @@ export async function updateProductStock(id: number, stock: number): Promise<{ s
  * Add image to product
  */
 export async function addProductImage(productId: number, imageUrl: string, isPrimary: boolean = false): Promise<{ success: boolean; id?: number; error?: string }> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) {
     return { success: false, error: 'Database not available' };
   }
@@ -494,7 +493,7 @@ export async function addProductImage(productId: number, imageUrl: string, isPri
  * Remove image from product
  */
 export async function removeProductImage(imageId: number): Promise<{ success: boolean; error?: string }> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) {
     return { success: false, error: 'Database not available' };
   }
@@ -512,7 +511,7 @@ export async function removeProductImage(imageId: number): Promise<{ success: bo
  * Set primary image for product
  */
 export async function setPrimaryImage(productId: number, imageId: number): Promise<{ success: boolean; error?: string }> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) {
     return { success: false, error: 'Database not available' };
   }

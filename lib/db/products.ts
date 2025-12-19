@@ -4,15 +4,15 @@
  */
 
 import type { Product, Fabric } from '@/types';
+import { neon } from '@neondatabase/serverless';
 
-// Type for the neon query function
-type NeonQueryFunction = any;
+// Type for the neon query function that returns arrays
+type SqlFunction = (strings: TemplateStringsArray, ...values: any[]) => Promise<any[]>;
 
 /**
- * Get SQL instance with dynamic import and error handling
- * Uses dynamic import to prevent build-time errors
+ * Get SQL instance with error handling
  */
-async function getSql(): Promise<NeonQueryFunction | null> {
+function getSql(): SqlFunction | null {
   // Get database URL from environment - check both standard and Netlify env vars
   const dbUrl = process.env.NETLIFY_DATABASE_URL || process.env.DATABASE_URL;
   
@@ -23,9 +23,7 @@ async function getSql(): Promise<NeonQueryFunction | null> {
   }
   
   try {
-    // Import directly from @neondatabase/serverless with the connection string
-    const { neon } = await import('@neondatabase/serverless');
-    return neon(dbUrl);
+    return neon(dbUrl) as SqlFunction;
   } catch (error) {
     console.warn('Database not available, returning empty results:', error);
     return null;
@@ -36,7 +34,7 @@ async function getSql(): Promise<NeonQueryFunction | null> {
  * Get all active products with their images
  */
 export async function getAllProducts(): Promise<Product[]> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) return [];
   
   try {
@@ -87,7 +85,7 @@ export async function getAllProducts(): Promise<Product[]> {
  * Get a single product by slug
  */
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) return null;
   
   try {
@@ -141,7 +139,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
  * Get all fabrics by type
  */
 export async function getFabricsByType(type: 'outer' | 'inner'): Promise<Fabric[]> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) return [];
   
   try {
@@ -180,7 +178,7 @@ export async function getInnerFabrics(): Promise<Fabric[]> {
  * Check if a product exists and is in stock
  */
 export async function checkProductStock(slug: string): Promise<{ exists: boolean; inStock: boolean; stock: number }> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) return { exists: false, inStock: false, stock: 0 };
   
   try {

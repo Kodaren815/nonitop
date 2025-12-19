@@ -5,15 +5,15 @@
 
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
+import { neon } from '@neondatabase/serverless';
 
-// Type for the neon query function
-type NeonQueryFunction = any;
+// Type for the neon query function that returns arrays
+type SqlFunction = (strings: TemplateStringsArray, ...values: any[]) => Promise<any[]>;
 
 /**
- * Get SQL instance with dynamic import and error handling
- * Uses dynamic import to prevent build-time errors
+ * Get SQL instance with error handling
  */
-async function getSql(): Promise<NeonQueryFunction | null> {
+function getSql(): SqlFunction | null {
   const dbUrl = process.env.NETLIFY_DATABASE_URL || process.env.DATABASE_URL;
   
   // Skip if no valid URL - covers build time when URL might not be set or is invalid
@@ -22,9 +22,7 @@ async function getSql(): Promise<NeonQueryFunction | null> {
   }
   
   try {
-    // Import directly from @neondatabase/serverless with the connection string
-    const { neon } = await import('@neondatabase/serverless');
-    return neon(dbUrl);
+    return neon(dbUrl) as SqlFunction;
   } catch (error) {
     console.warn('Database not available');
     return null;
@@ -50,7 +48,7 @@ export async function loginAdmin(
   username: string,
   password: string
 ): Promise<{ success: boolean; error?: string }> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) {
     return { success: false, error: 'Database not available' };
   }
@@ -121,7 +119,7 @@ export async function verifyAdminSession(): Promise<{
   userId?: number;
   username?: string;
 }> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) {
     return { authenticated: false };
   }
@@ -163,7 +161,7 @@ export async function verifyAdminSession(): Promise<{
  * Logout admin and destroy session
  */
 export async function logoutAdmin(): Promise<void> {
-  const sql = await getSql();
+  const sql = getSql();
   
   try {
     const cookieStore = await cookies();
@@ -192,7 +190,7 @@ export async function changeAdminPassword(
   currentPassword: string,
   newPassword: string
 ): Promise<{ success: boolean; error?: string }> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) {
     return { success: false, error: 'Database not available' };
   }
@@ -248,7 +246,7 @@ export async function changeAdminPassword(
  * Clean up expired sessions (can be called periodically)
  */
 export async function cleanupExpiredSessions(): Promise<void> {
-  const sql = await getSql();
+  const sql = getSql();
   if (!sql) return;
   
   try {
