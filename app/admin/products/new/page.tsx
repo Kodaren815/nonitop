@@ -18,6 +18,7 @@ export default function NewProductPage() {
   const [fabrics, setFabrics] = useState<Fabric[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   
   // Form state
@@ -97,6 +98,35 @@ export default function NewProductPage() {
       ...prev,
       images: prev.images.map((img, i) => (i === index ? value : img)),
     }));
+  }
+
+  async function handleImageUpload(index: number, file: File) {
+    setUploading(true);
+    setError('');
+
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('file', file);
+      formDataUpload.append('folder', 'products');
+
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        credentials: 'include',
+        body: formDataUpload,
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        updateImage(index, data.url);
+      } else {
+        setError(data.error || 'Failed to upload image');
+      }
+    } catch (err) {
+      setError('Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
   }
 
   function toggleOuterFabric(fabricId: number) {
@@ -333,23 +363,44 @@ export default function NewProductPage() {
             </div>
 
             <p className="text-sm text-gray-500 mb-4">
-              Enter image URLs. The first image will be the primary image.
+              First image is the primary image. Click &quot;Upload&quot; to add an image or paste a URL directly.
             </p>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               {formData.images.map((image, index) => (
-                <div key={index} className="flex gap-3 items-start">
-                  <div className="flex-1">
+                <div key={index} className="flex gap-3 items-start p-4 bg-gray-50 rounded-lg">
+                  <div className="flex-1 space-y-3">
+                    {/* Upload button */}
+                    <div className="flex gap-2">
+                      <label className="cursor-pointer inline-flex items-center px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors text-sm font-medium">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleImageUpload(index, file);
+                          }}
+                          disabled={uploading}
+                        />
+                        {uploading ? 'Uploading...' : '📷 Upload Image'}
+                      </label>
+                      <span className="text-sm text-gray-500 self-center">or paste URL below</span>
+                    </div>
+                    
+                    {/* URL input */}
                     <input
                       type="text"
                       value={image}
                       onChange={(e) => updateImage(index, e.target.value)}
                       placeholder={index === 0 ? "Primary image URL" : "Additional image URL"}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm"
                     />
                   </div>
+                  
+                  {/* Preview */}
                   {image && (
-                    <div className="w-12 h-12 relative rounded overflow-hidden bg-gray-100 flex-shrink-0">
+                    <div className="w-20 h-20 relative rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
                       <Image
                         src={image}
                         alt="Preview"
@@ -361,13 +412,16 @@ export default function NewProductPage() {
                       />
                     </div>
                   )}
+                  
+                  {/* Remove button */}
                   {formData.images.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeImageField(index)}
-                      className="text-red-500 hover:text-red-600 p-2"
+                      className="text-red-500 hover:text-red-600 p-2 hover:bg-red-50 rounded"
+                      title="Remove image"
                     >
-                      ×
+                      ✕
                     </button>
                   )}
                 </div>
@@ -467,7 +521,7 @@ export default function NewProductPage() {
             </Link>
             <button
               type="submit"
-              disabled={saving}
+              disabled={saving || uploading}
               className="px-6 py-2 bg-pink-500 text-white rounded-lg font-medium hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {saving ? 'Creating...' : 'Create Product'}
