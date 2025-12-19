@@ -3,6 +3,10 @@ import Image from 'next/image';
 import { getAllProducts } from '@/lib/db/products';
 import ProductCard from '@/components/ProductCard';
 
+// Force dynamic rendering to always fetch fresh data from database
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function HomePage() {
   // Get all products from database
   const products = await getAllProducts();

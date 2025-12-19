@@ -3,6 +3,10 @@ import { notFound } from 'next/navigation';
 import { getProductBySlug, getOuterFabrics, getInnerFabrics } from '@/lib/db/products';
 import ProductDetailClient from './ProductDetailClient';
 
+// Force dynamic rendering to always fetch fresh data from database
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
