@@ -3,19 +3,24 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "netlify dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:migrate": "node scripts/migrate-db.mjs",
+    "db:seed": "node scripts/seed-db.mjs"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "@stripe/stripe-js": "^4.10.0",
+    "bcryptjs": "^3.0.3",
     "next": "14.2.18",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "stripe": "^17.3.1",
-    "@stripe/stripe-js": "^4.10.0"
+    "stripe": "^17.3.1"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.17.9",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

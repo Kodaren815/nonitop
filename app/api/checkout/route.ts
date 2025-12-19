@@ -1,17 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { 
-  validateProduct, 
-  validateFabric, 
-  innerFabrics 
-} from '@/lib/products';
+  getProductBySlug, 
+  getOuterFabrics, 
+  getInnerFabrics,
+  validateProductSelection 
+} from '@/lib/db/products';
 
-// Validate Stripe key exists
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY environment variable is not set');
-}
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// Force dynamic (no static generation)
+export const dynamic = 'force-dynamic';
 
 // Input validation constants
 const MAX_ITEMS = 20;
@@ -91,6 +88,15 @@ function validateCheckoutItem(item: unknown): CheckoutItem | null {
 }
 
 export async function POST(request: NextRequest) {
+  // Initialize Stripe inside handler to keep it server-side
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return NextResponse.json(
+      { error: 'Server configuration error' },
+      { status: 500 }
+    );
+  }
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
   try {
     // Security: Check content type
     const contentType = request.headers.get('content-type');
@@ -150,16 +156,22 @@ export async function POST(request: NextRequest) {
       validatedItems.push(validatedItem);
     }
 
+    // Get fabrics from database for validation
+    const [outerFabrics, innerFabrics] = await Promise.all([
+      getOuterFabrics(),
+      getInnerFabrics(),
+    ]);
+
     // Build line items for Stripe Checkout
-    // Security: All prices come from server-side hardcoded data, not client
+    // Security: All prices come from server-side database data, not client
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
     const orderMetadata: Record<string, string> = {};
 
     for (let index = 0; index < validatedItems.length; index++) {
       const item = validatedItems[index];
       
-      // Security: Validate product exists in our hardcoded products
-      const product = validateProduct(item.productId);
+      // Security: Validate product exists in database
+      const product = await getProductBySlug(item.productId);
       if (!product) {
         return NextResponse.json(
           { error: `Invalid product: ${item.productId}` },
@@ -168,7 +180,9 @@ export async function POST(request: NextRequest) {
       }
 
       // Security: Validate fabric exists and is available for this product
-      const fabric = validateFabric(item.selectedFabric, product);
+      const fabric = outerFabrics.find(f => 
+        f.id === item.selectedFabric && product.availableFabrics.includes(f.id)
+      );
       if (!fabric) {
         return NextResponse.json(
           { error: `Invalid fabric selection for ${product.name}` },
@@ -203,7 +217,7 @@ export async function POST(request: NextRequest) {
         description += ` | Önskemål: ${item.notes}`;
       }
 
-      // Security: Price comes from server-side hardcoded data, not client input
+      // Security: Price comes from server-side database data, not client input
       lineItems.push({
         price_data: {
           currency: 'sek',
@@ -236,11 +250,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Calculate total for free shipping check
-    const subtotal = validatedItems.reduce((total, item) => {
-      const product = validateProduct(item.productId);
-      return total + (product?.price || 0) * item.quantity;
-    }, 0);
+    // Calculate total for free shipping check from line items
+    const subtotal = lineItems.reduce((total, item) => {
+      const unitAmount = item.price_data?.unit_amount || 0;
+      const quantity = item.quantity || 1;
+      return total + unitAmount * quantity;
+    }, 0) / 100; // Convert from öre to SEK
 
     // Build shipping options
     const shippingOptions: Stripe.Checkout.SessionCreateParams.ShippingOption[] = [

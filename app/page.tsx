@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getAllProducts } from '@/lib/products';
+import { getAllProducts } from '@/lib/db/products';
 import ProductCard from '@/components/ProductCard';
 
-export default function HomePage() {
-  // Get all hardcoded products
-  const products = getAllProducts();
+export default async function HomePage() {
+  // Get all products from database
+  const products = await getAllProducts();
 
   return (
     <div>

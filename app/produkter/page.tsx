@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getAllProducts } from '@/lib/products';
+import { getAllProducts } from '@/lib/db/products';
 import ProductCard from '@/components/ProductCard';
 
 export const metadata: Metadata = {
@@ -8,9 +8,9 @@ export const metadata: Metadata = {
     'Utforska våra handgjorda produkter - miniskötväska, mini pouch, necessär och puffkorg. Välj ditt favorit tyg!',
 };
 
-export default function ProductsPage() {
-  // Get all hardcoded products
-  const products = getAllProducts();
+export default async function ProductsPage() {
+  // Get all products from database
+  const products = await getAllProducts();
 
   return (
     <div className="py-12 md:py-16 animate-fade-in">

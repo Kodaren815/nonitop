@@ -1,21 +1,17 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import {
-  getProductBySlug,
-  getAvailableFabricsForProduct,
-  outerFabrics,
-  innerFabrics,
-} from '@/lib/products';
+import { getProductBySlug, getOuterFabrics, getInnerFabrics } from '@/lib/db/products';
 import ProductDetailClient from './ProductDetailClient';
 
 interface ProductPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://nonito.se';
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const product = getProductBySlug(params.slug);
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
   
   if (!product) {
     return {
@@ -74,15 +70,22 @@ function generateProductJsonLd(product: {
   };
 }
 
-export default function ProductPage({ params }: ProductPageProps) {
-  // Get hardcoded product
-  const product = getProductBySlug(params.slug);
+export default async function ProductPage({ params }: ProductPageProps) {
+  const { slug } = await params;
+  
+  // Get product from database
+  const [product, outerFabrics, innerFabrics] = await Promise.all([
+    getProductBySlug(slug),
+    getOuterFabrics(),
+    getInnerFabrics(),
+  ]);
 
   if (!product) {
     notFound();
   }
 
-  const availableFabrics = getAvailableFabricsForProduct(product);
+  // Get available fabrics for this product
+  const availableFabrics = outerFabrics.filter(f => product.availableFabrics.includes(f.id));
   const jsonLd = generateProductJsonLd(product);
 
   return (

@@ -5,7 +5,23 @@ import Footer from '@/components/Footer';
 import CartSlideOver from '@/components/CartSlideOver';
 import '@/styles/globals.css';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://nonito.se';
+// Get site URL with validation - fallback to default if invalid
+function getSiteUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const fallback = 'https://nonito.se';
+  
+  if (!envUrl) return fallback;
+  
+  // Check if URL is valid (not masked or invalid)
+  try {
+    new URL(envUrl);
+    return envUrl;
+  } catch {
+    return fallback;
+  }
+}
+
+const siteUrl = getSiteUrl();
 
 export const viewport: Viewport = {
   width: 'device-width',

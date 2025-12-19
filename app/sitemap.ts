@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
-import { getAllProducts } from '@/lib/products';
+import { getAllProducts } from '@/lib/db/products';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://nonito.se';
   
   // Static pages
@@ -38,8 +38,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
   
-  // Dynamic product pages from hardcoded products
-  const products = getAllProducts();
+  // Dynamic product pages from database
+  const products = await getAllProducts();
   const productPages: MetadataRoute.Sitemap = products.map((product) => ({
     url: `${siteUrl}/produkter/${product.slug}`,
     lastModified: new Date(),
