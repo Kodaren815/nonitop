@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminSession } from '@/lib/db/auth';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { getStore } from '@netlify/blobs';
 
 // Force dynamic (no static generation)
 export const dynamic = 'force-dynamic';
 
 /**
  * POST /api/admin/upload
- * Upload an image file
+ * Upload an image file to Netlify Blobs
  */
 export async function POST(request: NextRequest) {
   try {
@@ -48,20 +47,17 @@ export async function POST(request: NextRequest) {
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 8);
     const extension = file.name.split('.').pop() || 'jpg';
-    const filename = `${timestamp}-${randomString}.${extension}`;
+    const filename = `${folder}/${timestamp}-${randomString}.${extension}`;
 
-    // Ensure the upload directory exists
-    const uploadDir = path.join(process.cwd(), 'public', 'images', folder);
-    await mkdir(uploadDir, { recursive: true });
+    // Get Netlify Blobs store
+    const store = getStore('images');
 
-    // Write file
+    // Convert file to ArrayBuffer and store
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const filePath = path.join(uploadDir, filename);
-    await writeFile(filePath, buffer);
+    await store.set(filename, new Blob([bytes], { type: file.type }));
 
-    // Return the public URL
-    const url = `/images/${folder}/${filename}`;
+    // Return the URL to serve the image
+    const url = `/api/images/${filename}`;
 
     return NextResponse.json({
       success: true,
