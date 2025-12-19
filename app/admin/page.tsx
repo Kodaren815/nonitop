@@ -15,7 +15,7 @@ export default function AdminLoginPage() {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const res = await fetch('/api/admin/auth');
+        const res = await fetch('/api/admin/auth', { credentials: 'include' });
         if (res.ok) {
           const data = await res.json();
           if (data.authenticated) {
@@ -40,6 +40,7 @@ export default function AdminLoginPage() {
       const res = await fetch('/api/admin/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ username, password }),
       });
 

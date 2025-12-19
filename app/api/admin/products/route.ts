@@ -78,7 +78,8 @@ export async function POST(request: NextRequest) {
       category: String(body.category).trim(),
       hasLiningOption: Boolean(body.hasLiningOption),
       images: Array.isArray(body.images) ? body.images.map(String) : [],
-      fabricIds: Array.isArray(body.fabricIds) ? body.fabricIds.map(Number).filter((n: number) => !isNaN(n)) : [],
+      outerFabricIds: Array.isArray(body.outerFabricIds) ? body.outerFabricIds.map(Number).filter((n: number) => !isNaN(n)) : [],
+      innerFabricIds: Array.isArray(body.innerFabricIds) ? body.innerFabricIds.map(Number).filter((n: number) => !isNaN(n)) : [],
     };
 
     const result = await createProduct(productData);

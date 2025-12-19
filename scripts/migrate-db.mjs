@@ -94,7 +94,8 @@ async function migrate() {
         id SERIAL PRIMARY KEY,
         product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
         fabric_id INTEGER REFERENCES fabrics(id) ON DELETE CASCADE,
-        UNIQUE(product_id, fabric_id)
+        fabric_role VARCHAR(20) DEFAULT 'outer',
+        UNIQUE(product_id, fabric_id, fabric_role)
       )
     `;
     console.log('✅ product_fabrics table created\n');

@@ -86,7 +86,8 @@ export async function PUT(
     if (body.hasLiningOption !== undefined) updateData.hasLiningOption = Boolean(body.hasLiningOption);
     if (body.isActive !== undefined) updateData.isActive = Boolean(body.isActive);
     if (body.images !== undefined) updateData.images = Array.isArray(body.images) ? body.images.map(String) : [];
-    if (body.fabricIds !== undefined) updateData.fabricIds = Array.isArray(body.fabricIds) ? body.fabricIds.map(Number).filter((n: number) => !isNaN(n)) : [];
+    if (body.outerFabricIds !== undefined) updateData.outerFabricIds = Array.isArray(body.outerFabricIds) ? body.outerFabricIds.map(Number).filter((n: number) => !isNaN(n)) : [];
+    if (body.innerFabricIds !== undefined) updateData.innerFabricIds = Array.isArray(body.innerFabricIds) ? body.innerFabricIds.map(Number).filter((n: number) => !isNaN(n)) : [];
 
     const result = await updateProduct(productId, updateData);
 

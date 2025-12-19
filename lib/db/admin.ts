@@ -44,7 +44,8 @@ export interface AdminProduct {
   createdAt: string;
   updatedAt: string;
   images: { id: number; url: string; isPrimary: boolean; sortOrder: number }[];
-  fabricIds: number[];
+  outerFabricIds: number[];
+  innerFabricIds: number[];
 }
 
 export interface CreateProductData {
@@ -58,7 +59,8 @@ export interface CreateProductData {
   category: string;
   hasLiningOption: boolean;
   images: string[];
-  fabricIds: number[];
+  outerFabricIds: number[];
+  innerFabricIds: number[];
 }
 
 export interface UpdateProductData extends Partial<CreateProductData> {
@@ -136,16 +138,23 @@ export async function getAllAdminProducts(): Promise<AdminProduct[]> {
         ORDER BY sort_order
       `;
 
-      const fabrics = await sql`
+      const outerFabrics = await sql`
         SELECT fabric_id
         FROM product_fabrics
-        WHERE product_id = ${product.id}
+        WHERE product_id = ${product.id} AND (fabric_role = 'outer' OR fabric_role IS NULL)
+      `;
+
+      const innerFabrics = await sql`
+        SELECT fabric_id
+        FROM product_fabrics
+        WHERE product_id = ${product.id} AND fabric_role = 'inner'
       `;
 
       return {
         ...product,
         images,
-        fabricIds: fabrics.map((f: any) => (f as { fabric_id: number }).fabric_id),
+        outerFabricIds: outerFabrics.map((f: any) => (f as { fabric_id: number }).fabric_id),
+        innerFabricIds: innerFabrics.map((f: any) => (f as { fabric_id: number }).fabric_id),
       };
     })
   );
@@ -192,16 +201,23 @@ export async function getAdminProductById(id: number): Promise<AdminProduct | nu
     ORDER BY sort_order
   `;
 
-  const fabrics = await sql`
+  const outerFabrics = await sql`
     SELECT fabric_id
     FROM product_fabrics
-    WHERE product_id = ${product.id}
+    WHERE product_id = ${product.id} AND (fabric_role = 'outer' OR fabric_role IS NULL)
+  `;
+
+  const innerFabrics = await sql`
+    SELECT fabric_id
+    FROM product_fabrics
+    WHERE product_id = ${product.id} AND fabric_role = 'inner'
   `;
 
   return {
     ...product,
     images,
-    fabricIds: fabrics.map((f: any) => (f as { fabric_id: number }).fabric_id),
+    outerFabricIds: outerFabrics.map((f: any) => (f as { fabric_id: number }).fabric_id),
+    innerFabricIds: innerFabrics.map((f: any) => (f as { fabric_id: number }).fabric_id),
   } as AdminProduct;
 }
 
@@ -248,11 +264,20 @@ export async function createProduct(data: CreateProductData): Promise<{ success:
       `;
     }
 
-    // Insert fabric associations
-    for (const fabricId of data.fabricIds) {
+    // Insert outer fabric associations
+    for (const fabricId of data.outerFabricIds) {
       await sql`
-        INSERT INTO product_fabrics (product_id, fabric_id)
-        VALUES (${productId}, ${fabricId})
+        INSERT INTO product_fabrics (product_id, fabric_id, fabric_role)
+        VALUES (${productId}, ${fabricId}, 'outer')
+        ON CONFLICT DO NOTHING
+      `;
+    }
+
+    // Insert inner fabric associations
+    for (const fabricId of data.innerFabricIds) {
+      await sql`
+        INSERT INTO product_fabrics (product_id, fabric_id, fabric_role)
+        VALUES (${productId}, ${fabricId}, 'inner')
         ON CONFLICT DO NOTHING
       `;
     }
@@ -340,12 +365,24 @@ export async function updateProduct(id: number, data: UpdateProductData): Promis
     }
 
     // Update fabric associations if provided
-    if (data.fabricIds !== undefined) {
-      await sql`DELETE FROM product_fabrics WHERE product_id = ${id}`;
-      for (const fabricId of data.fabricIds) {
+    if (data.outerFabricIds !== undefined) {
+      await sql`DELETE FROM product_fabrics WHERE product_id = ${id} AND (fabric_role = 'outer' OR fabric_role IS NULL)`;
+      for (const fabricId of data.outerFabricIds) {
         await sql`
-          INSERT INTO product_fabrics (product_id, fabric_id)
-          VALUES (${id}, ${fabricId})
+          INSERT INTO product_fabrics (product_id, fabric_id, fabric_role)
+          VALUES (${id}, ${fabricId}, 'outer')
+          ON CONFLICT DO NOTHING
+        `;
+      }
+    }
+
+    // Update inner fabric associations if provided
+    if (data.innerFabricIds !== undefined) {
+      await sql`DELETE FROM product_fabrics WHERE product_id = ${id} AND fabric_role = 'inner'`;
+      for (const fabricId of data.innerFabricIds) {
+        await sql`
+          INSERT INTO product_fabrics (product_id, fabric_id, fabric_role)
+          VALUES (${id}, ${fabricId}, 'inner')
           ON CONFLICT DO NOTHING
         `;
       }

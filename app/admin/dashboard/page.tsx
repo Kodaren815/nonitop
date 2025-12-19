@@ -54,7 +54,7 @@ export default function AdminDashboard() {
   async function checkAuthAndLoad() {
     try {
       // Check authentication
-      const authRes = await fetch('/api/admin/auth');
+      const authRes = await fetch('/api/admin/auth', { credentials: 'include' });
       if (!authRes.ok) {
         router.replace('/admin');
         return;
@@ -75,7 +75,7 @@ export default function AdminDashboard() {
   }
 
   async function loadProducts() {
-    const res = await fetch('/api/admin/products?fabrics=true');
+    const res = await fetch('/api/admin/products?fabrics=true', { credentials: 'include' });
     if (res.ok) {
       const data = await res.json();
       setProducts(data.products || []);
@@ -86,7 +86,7 @@ export default function AdminDashboard() {
   }
 
   async function handleLogout() {
-    await fetch('/api/admin/auth', { method: 'DELETE' });
+    await fetch('/api/admin/auth', { method: 'DELETE', credentials: 'include' });
     router.replace('/admin');
   }
 
@@ -95,6 +95,7 @@ export default function AdminDashboard() {
       const res = await fetch(`/api/admin/products/${product.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ isActive: !product.isActive }),
       });
       if (res.ok) {
@@ -109,6 +110,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`/api/admin/products/${id}?hard=true`, {
         method: 'DELETE',
+        credentials: 'include',
       });
       if (res.ok) {
         setDeleteConfirm(null);

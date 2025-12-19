@@ -32,7 +32,8 @@ export default function NewProductPage() {
     category: 'mini',
     hasLiningOption: true,
     images: [''],
-    fabricIds: [] as number[],
+    outerFabricIds: [] as number[],
+    innerFabricIds: [] as number[],
   });
 
   useEffect(() => {
@@ -41,14 +42,14 @@ export default function NewProductPage() {
 
   async function checkAuthAndLoad() {
     try {
-      const authRes = await fetch('/api/admin/auth');
+      const authRes = await fetch('/api/admin/auth', { credentials: 'include' });
       if (!authRes.ok) {
         router.replace('/admin');
         return;
       }
 
       // Load fabrics
-      const res = await fetch('/api/admin/products?fabrics=true');
+      const res = await fetch('/api/admin/products?fabrics=true', { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
         setFabrics(data.fabrics || []);
@@ -56,7 +57,11 @@ export default function NewProductPage() {
         const outerFabricIds = (data.fabrics || [])
           .filter((f: Fabric) => f.type === 'outer')
           .map((f: Fabric) => f.id);
-        setFormData(prev => ({ ...prev, fabricIds: outerFabricIds }));
+        // Select all inner fabrics by default
+        const innerFabricIds = (data.fabrics || [])
+          .filter((f: Fabric) => f.type === 'inner')
+          .map((f: Fabric) => f.id);
+        setFormData(prev => ({ ...prev, outerFabricIds, innerFabricIds }));
       }
     } catch (err) {
       setError('Failed to load data');
@@ -94,12 +99,21 @@ export default function NewProductPage() {
     }));
   }
 
-  function toggleFabric(fabricId: number) {
+  function toggleOuterFabric(fabricId: number) {
     setFormData(prev => ({
       ...prev,
-      fabricIds: prev.fabricIds.includes(fabricId)
-        ? prev.fabricIds.filter(id => id !== fabricId)
-        : [...prev.fabricIds, fabricId],
+      outerFabricIds: prev.outerFabricIds.includes(fabricId)
+        ? prev.outerFabricIds.filter(id => id !== fabricId)
+        : [...prev.outerFabricIds, fabricId],
+    }));
+  }
+
+  function toggleInnerFabric(fabricId: number) {
+    setFormData(prev => ({
+      ...prev,
+      innerFabricIds: prev.innerFabricIds.includes(fabricId)
+        ? prev.innerFabricIds.filter(id => id !== fabricId)
+        : [...prev.innerFabricIds, fabricId],
     }));
   }
 
@@ -112,6 +126,7 @@ export default function NewProductPage() {
       const res = await fetch('/api/admin/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           ...formData,
           price: parseInt(formData.price, 10),
@@ -143,6 +158,7 @@ export default function NewProductPage() {
   }
 
   const outerFabrics = fabrics.filter(f => f.type === 'outer');
+  const innerFabrics = fabrics.filter(f => f.type === 'inner');
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -359,9 +375,9 @@ export default function NewProductPage() {
             </div>
           </div>
 
-          {/* Fabrics */}
+          {/* Outer Fabrics */}
           <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Available Fabrics</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Available Outer Fabrics</h2>
             <p className="text-sm text-gray-500 mb-4">
               Select which outer fabrics are available for this product.
             </p>
@@ -371,9 +387,9 @@ export default function NewProductPage() {
                 <button
                   key={fabric.id}
                   type="button"
-                  onClick={() => toggleFabric(fabric.id)}
+                  onClick={() => toggleOuterFabric(fabric.id)}
                   className={`relative rounded-lg overflow-hidden border-2 transition-all ${
-                    formData.fabricIds.includes(fabric.id)
+                    formData.outerFabricIds.includes(fabric.id)
                       ? 'border-pink-500 ring-2 ring-pink-200'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
@@ -389,7 +405,7 @@ export default function NewProductPage() {
                   <div className="p-2 text-center">
                     <span className="text-xs font-medium text-gray-700">{fabric.name}</span>
                   </div>
-                  {formData.fabricIds.includes(fabric.id) && (
+                  {formData.outerFabricIds.includes(fabric.id) && (
                     <div className="absolute top-1 right-1 bg-pink-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
                       ✓
                     </div>
@@ -398,6 +414,48 @@ export default function NewProductPage() {
               ))}
             </div>
           </div>
+
+          {/* Inner Fabrics */}
+          {formData.hasLiningOption && (
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Available Inner Fabrics (Lining)</h2>
+              <p className="text-sm text-gray-500 mb-4">
+                Select which inner fabrics are available for lining this product.
+              </p>
+
+              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                {innerFabrics.map((fabric) => (
+                  <button
+                    key={fabric.id}
+                    type="button"
+                    onClick={() => toggleInnerFabric(fabric.id)}
+                    className={`relative rounded-lg overflow-hidden border-2 transition-all ${
+                      formData.innerFabricIds.includes(fabric.id)
+                        ? 'border-blue-500 ring-2 ring-blue-200'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="aspect-square relative">
+                      <Image
+                        src={fabric.imageUrl}
+                        alt={fabric.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="p-2 text-center">
+                      <span className="text-xs font-medium text-gray-700">{fabric.name}</span>
+                    </div>
+                    {formData.innerFabricIds.includes(fabric.id) && (
+                      <div className="absolute top-1 right-1 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                        ✓
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Submit */}
           <div className="flex justify-end gap-4">
