@@ -47,6 +47,8 @@ const nextConfig = {
   // Experimental performance features
   experimental: {
     optimizePackageImports: ['lucide-react'],
+    // Externalize neon serverless package to prevent bundling issues
+    serverComponentsExternalPackages: ['@neondatabase/serverless'],
   },
 }
 

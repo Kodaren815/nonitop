@@ -3,6 +3,7 @@
  * Handles secure authentication for admin dashboard
  */
 
+import 'server-only';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { neon } from '@neondatabase/serverless';

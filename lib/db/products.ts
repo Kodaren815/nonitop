@@ -3,6 +3,7 @@
  * Fetches products from Netlify Neon database
  */
 
+import 'server-only';
 import type { Product, Fabric } from '@/types';
 import { neon } from '@neondatabase/serverless';
 

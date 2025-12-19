@@ -3,6 +3,7 @@
  * Secure CRUD operations for product management
  */
 
+import 'server-only';
 import { neon } from '@neondatabase/serverless';
 
 // Type for the neon query function that returns arrays
