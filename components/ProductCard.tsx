@@ -6,14 +6,19 @@ interface ProductCardProps {
   product: Product;
 }
 
+// Default placeholder image for products without images
+const DEFAULT_PRODUCT_IMAGE = '/images/products/placeholder.svg';
+
 export default function ProductCard({ product }: ProductCardProps) {
+  const imageUrl = product.image || DEFAULT_PRODUCT_IMAGE;
+  
   return (
     <Link href={`/produkter/${product.slug}`} className="group">
       <div className="card overflow-hidden">
         {/* Product Image */}
         <div className="relative aspect-square overflow-hidden bg-pink-50">
           <Image
-            src={product.image}
+            src={imageUrl}
             alt={product.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
