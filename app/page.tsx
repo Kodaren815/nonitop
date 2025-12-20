@@ -13,69 +13,71 @@ export default async function HomePage() {
 
   return (
     <div>
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-pink-50 to-offwhite py-20 md:py-32 overflow-hidden">
-        <div className="section-container">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left side - Text content */}
-            <div className="text-center lg:text-left animate-slide-up">
-              <div className="inline-block mb-6 px-6 py-2 bg-pink-100 rounded-full text-pink-600 text-sm font-medium animate-fade-in">
-                ✨ Handgjort med kärlek i Sverige
-              </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-charcoal mb-6 leading-tight">
-                En värld av söta och praktiska saker för{' '}
-                <span className="text-pink-500 inline-block hover:scale-105 transition-transform duration-300">
-                  dig och mini
-                </span>
-              </h1>
-              <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
-                Små handgjorda favoriter - till dig och mini. Designade med kärlek
-                i Sverige.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link href="/produkter" className="btn-primary group">
-                  Se alla produkter
-                  <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">
-                    →
-                  </span>
-                </Link>
-                <Link href="/om-oss" className="btn-secondary">
-                  Läs mer om oss
-                </Link>
-              </div>
-            </div>
+      {/* Hero Section with Background Image */}
+      <section className="relative min-h-[90vh] md:min-h-screen flex items-center overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/products/IMG_2784.jpeg"
+            alt="Nonito produkter"
+            fill
+            sizes="100vw"
+            className="object-cover"
+            priority
+            quality={90}
+          />
+          {/* Overlay gradient for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>
+        </div>
 
-            {/* Right side - Product image */}
-            <div className="relative lg:block animate-slide-up" style={{ animationDelay: '200ms' }}>
-              <div className="relative aspect-square max-w-md mx-auto lg:max-w-none rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500">
-                <Image
-                  src="/images/products/IMG_2784.jpeg"
-                  alt="Nonito produkter"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover"
-                  priority
-                  quality={90}
-                />
-              </div>
-              {/* Decorative elements around image */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-pink-200 rounded-full blur-3xl opacity-60 animate-pulse"></div>
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-pink-100 rounded-full blur-3xl opacity-60 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        {/* Content */}
+        <div className="section-container relative z-10 py-20 md:py-32">
+          <div className="max-w-2xl">
+            {/* Badge */}
+            <div className="inline-block mb-6 px-6 py-2 bg-white/90 backdrop-blur-sm rounded-full text-pink-600 text-sm font-medium animate-fade-in shadow-lg">
+              ✨ Handgjort med kärlek i Sverige
+            </div>
+            
+            {/* Heading */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif text-white mb-6 leading-tight animate-slide-up drop-shadow-2xl">
+              En värld av söta och praktiska saker för{' '}
+              <span className="text-pink-300 inline-block hover:scale-105 transition-transform duration-300">
+                dig och mini
+              </span>
+            </h1>
+            
+            {/* Description */}
+            <p className="text-lg md:text-xl lg:text-2xl text-white/95 mb-8 leading-relaxed drop-shadow-lg animate-slide-up" style={{ animationDelay: '100ms' }}>
+              Små handgjorda favoriter - till dig och mini. Designade med kärlek
+              i Sverige.
+            </p>
+            
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: '200ms' }}>
+              <Link href="/produkter" className="inline-flex items-center justify-center px-8 py-4 bg-pink-500 text-white rounded-full font-semibold text-lg hover:bg-pink-600 hover:scale-105 transition-all duration-300 shadow-xl group">
+                Se alla produkter
+                <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">
+                  →
+                </span>
+              </Link>
+              <Link href="/om-oss" className="inline-flex items-center justify-center px-8 py-4 bg-white/90 backdrop-blur-sm text-charcoal rounded-full font-semibold text-lg hover:bg-white hover:scale-105 transition-all duration-300 shadow-xl">
+                Läs mer om oss
+              </Link>
             </div>
           </div>
         </div>
 
         {/* Decorative elements with animation */}
-        <div className="absolute top-10 left-10 text-4xl opacity-50 hidden lg:block animate-float">
+        <div className="absolute top-10 left-10 text-4xl opacity-70 hidden lg:block animate-float drop-shadow-lg">
           🧸
         </div>
-        <div className="absolute bottom-10 right-10 text-4xl opacity-50 hidden lg:block animate-float-delayed">
+        <div className="absolute bottom-10 right-10 text-4xl opacity-70 hidden lg:block animate-float-delayed drop-shadow-lg">
           💕
         </div>
-        <div className="absolute top-1/2 left-5 text-3xl opacity-30 hidden lg:block animate-float-slow">
+        <div className="absolute top-1/2 right-20 text-3xl opacity-50 hidden lg:block animate-float-slow drop-shadow-lg">
           🎀
         </div>
-        <div className="absolute top-1/4 right-5 text-3xl opacity-30 hidden lg:block animate-float-delayed">
+        <div className="absolute top-1/4 left-20 text-3xl opacity-50 hidden lg:block animate-float-delayed drop-shadow-lg">
           ✨
         </div>
       </section>
