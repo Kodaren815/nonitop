@@ -22,7 +22,7 @@ export default async function HomePage() {
             alt="Nonito produkter"
             fill
             sizes="100vw"
-            className="object-cover"
+            className="object-cover object-center scale-90"
             priority
             quality={90}
           />
