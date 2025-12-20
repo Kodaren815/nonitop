@@ -32,19 +32,18 @@ export default function AboutPage() {
             />
           </div>
           <div className="space-y-6">
-            <h2 className="text-2xl font-serif text-charcoal">Vår historia</h2>
+            <h2 className="text-2xl font-serif text-charcoal">OM NONITO</h2>
             <p className="text-gray-600">
-              Nonito började som en dröm om att skapa något vackert och praktiskt
-              för föräldrar och barn. Som mamma vet jag hur viktigt det är med
-              smarta lösningar som gör vardagen lite enklare.
+              Nonito föddes under min mammaledighet när jag började sy på kvällarna och skapa sådant jag själv saknade i vardagen med bebis. Min lilla son, som har smeknamnet Nonito, inspirerade både namnet och modet att våga starta något eget.
             </p>
             <p className="text-gray-600">
-              Varje produkt designas med omsorg och sys för hand. Jag vill att
-              du ska känna att du har något speciellt - något som är gjort just
-              för dig och din lilla.
+              En av de allra första idéerna blev miniskötväskan, efter att jag längtat efter en smidigare lösning än den stora skötväskan vi bar runt på. Så jag sydde en egen och kände direkt att det här ville jag dela med andra föräldrar.
             </p>
             <p className="text-gray-600">
-              Tack för att du väljer Nonito. Det betyder allt för mig! 💕
+              Jag hoppas att mina skapelser får sprida vardagsglädje och värme, oavsett om de flyttar hem till en barnfamilj, in i ett kreativt hörn eller hittar sin plats någonstans ute i världen!
+            </p>
+            <p className="text-gray-600">
+              Skapat med omsorg av mig, Hannah 💗
             </p>
           </div>
         </div>
