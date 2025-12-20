@@ -70,8 +70,8 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
-          <p className="text-gray-600 mt-2">Nonito Product Management</p>
+          <h1 className="text-2xl font-bold text-gray-900">Admin Inloggning</h1>
+          <p className="text-gray-600 mt-2">Nonito Produkthantering</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -83,7 +83,7 @@ export default function AdminLoginPage() {
 
           <div>
             <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-              Username
+              Användarnamn
             </label>
             <input
               id="username"
@@ -98,7 +98,7 @@ export default function AdminLoginPage() {
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Password
+              Lösenord
             </label>
             <input
               id="password"
@@ -116,12 +116,12 @@ export default function AdminLoginPage() {
             disabled={loading}
             className="w-full bg-pink-500 text-white py-2 px-4 rounded-lg font-medium hover:bg-pink-600 focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Loggar in...' : 'Logga in'}
           </button>
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-500">
-          <p>Contact administrator if you need access.</p>
+          <p>Kontakta administratören om du behöver åtkomst.</p>
         </div>
       </div>
     </div>

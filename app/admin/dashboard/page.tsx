@@ -137,13 +137,13 @@ export default function AdminDashboard() {
           <h1 className="text-xl font-bold text-gray-900">Nonito Admin</h1>
           <div className="flex items-center gap-4">
             <Link href="/" className="text-gray-600 hover:text-gray-900 text-sm">
-              View Site
+              Visa sida
             </Link>
             <button
               onClick={handleLogout}
               className="text-red-600 hover:text-red-700 text-sm font-medium"
             >
-              Logout
+              Logga ut
             </button>
           </div>
         </div>
@@ -161,23 +161,23 @@ export default function AdminDashboard() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-gray-500 text-sm font-medium">Total Products</h3>
+            <h3 className="text-gray-500 text-sm font-medium">Totalt Produkter</h3>
             <p className="text-3xl font-bold text-gray-900">{products.length}</p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-gray-500 text-sm font-medium">Active Products</h3>
+            <h3 className="text-gray-500 text-sm font-medium">Aktiva Produkter</h3>
             <p className="text-3xl font-bold text-green-600">
               {products.filter(p => p.isActive).length}
             </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-gray-500 text-sm font-medium">Low Stock (&lt;5)</h3>
+            <h3 className="text-gray-500 text-sm font-medium">Lågt Lager (&lt;5)</h3>
             <p className="text-3xl font-bold text-orange-500">
               {products.filter(p => p.stock < 5).length}
             </p>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-gray-500 text-sm font-medium">Out of Stock</h3>
+            <h3 className="text-gray-500 text-sm font-medium">Slut i Lager</h3>
             <p className="text-3xl font-bold text-red-500">
               {products.filter(p => p.stock === 0).length}
             </p>
@@ -186,12 +186,12 @@ export default function AdminDashboard() {
 
         {/* Products Header */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Products</h2>
+          <h2 className="text-xl font-bold text-gray-900">Produkter</h2>
           <Link
             href="/admin/products/new"
             className="bg-pink-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-pink-600 transition-colors"
           >
-            + Add Product
+            + Lägg till Produkt
           </Link>
         </div>
 
@@ -201,22 +201,22 @@ export default function AdminDashboard() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Product
+                  Produkt
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Price
+                  Pris
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Stock
+                  Lager
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Images
+                  Bilder
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
+                  Åtgärder
                 </th>
               </tr>
             </thead>
@@ -264,18 +264,18 @@ export default function AdminDashboard() {
                           : 'bg-gray-100 text-gray-800'
                       }`}
                     >
-                      {product.isActive ? 'Active' : 'Inactive'}
+                      {product.isActive ? 'Aktiv' : 'Inaktiv'}
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {product.images.length} images
+                    {product.images.length} bilder
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Link
                       href={`/admin/products/${product.id}`}
                       className="text-pink-600 hover:text-pink-900 mr-4"
                     >
-                      Edit
+                      Redigera
                     </Link>
                     {deleteConfirm === product.id ? (
                       <>
@@ -283,13 +283,13 @@ export default function AdminDashboard() {
                           onClick={() => handleDelete(product.id)}
                           className="text-red-600 hover:text-red-900 mr-2"
                         >
-                          Confirm
+                          Bekräfta
                         </button>
                         <button
                           onClick={() => setDeleteConfirm(null)}
                           className="text-gray-600 hover:text-gray-900"
                         >
-                          Cancel
+                          Avbryt
                         </button>
                       </>
                     ) : (
@@ -297,7 +297,7 @@ export default function AdminDashboard() {
                         onClick={() => setDeleteConfirm(product.id)}
                         className="text-red-600 hover:text-red-900"
                       >
-                        Delete
+                        Radera
                       </button>
                     )}
                   </td>
@@ -308,12 +308,12 @@ export default function AdminDashboard() {
 
           {products.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500">No products yet.</p>
+              <p className="text-gray-500">Inga produkter ännu.</p>
               <Link
                 href="/admin/products/new"
                 className="text-pink-500 hover:text-pink-600 font-medium"
               >
-                Add your first product
+                Lägg till din första produkt
               </Link>
             </div>
           )}
@@ -321,7 +321,7 @@ export default function AdminDashboard() {
 
         {/* Fabrics Section */}
         <div className="mt-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Available Fabrics</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Tillgängliga Tyger</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {fabrics.map((fabric) => (
               <div key={fabric.id} className="bg-white rounded-lg shadow p-3">

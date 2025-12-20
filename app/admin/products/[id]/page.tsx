@@ -234,9 +234,9 @@ export default function EditProductPage() {
         <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <Link href="/admin/dashboard" className="text-gray-600 hover:text-gray-900">
-              ← Back
+              ← Tillbaka
             </Link>
-            <h1 className="text-xl font-bold text-gray-900">Edit Product</h1>
+            <h1 className="text-xl font-bold text-gray-900">Redigera Produkt</h1>
           </div>
         </div>
       </header>
@@ -252,12 +252,12 @@ export default function EditProductPage() {
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Info */}
           <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Grundinformation</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Product Name *
+                  Produktnamn *
                 </label>
                 <input
                   type="text"
@@ -270,7 +270,7 @@ export default function EditProductPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  URL Slug *
+                  URL-slug *
                 </label>
                 <input
                   type="text"
@@ -283,7 +283,7 @@ export default function EditProductPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Price (SEK) *
+                  Pris (SEK) *
                 </label>
                 <input
                   type="number"
@@ -297,7 +297,7 @@ export default function EditProductPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Stock Quantity *
+                  Lagerkvantitet *
                 </label>
                 <input
                   type="number"
@@ -311,7 +311,7 @@ export default function EditProductPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category *
+                  Kategori *
                 </label>
                 <select
                   value={formData.category}
@@ -326,13 +326,13 @@ export default function EditProductPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Size
+                  Storlek
                 </label>
                 <input
                   type="text"
                   value={formData.size}
                   onChange={(e) => setFormData(prev => ({ ...prev, size: e.target.value }))}
-                  placeholder="e.g., ca 28 x 17 cm"
+                  placeholder="t.ex. ca 28 x 17 cm"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                 />
               </div>
@@ -346,7 +346,7 @@ export default function EditProductPage() {
                   onChange={(e) => setFormData(prev => ({ ...prev, hasLiningOption: e.target.checked }))}
                   className="rounded border-gray-300 text-pink-500 focus:ring-pink-500"
                 />
-                <span className="text-sm text-gray-700">Has lining option</span>
+                <span className="text-sm text-gray-700">Har föderalternativ</span>
               </label>
 
               <label className="flex items-center gap-2">
@@ -356,19 +356,19 @@ export default function EditProductPage() {
                   onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
                   className="rounded border-gray-300 text-pink-500 focus:ring-pink-500"
                 />
-                <span className="text-sm text-gray-700">Active (visible on site)</span>
+                <span className="text-sm text-gray-700">Aktiv (synlig på sidan)</span>
               </label>
             </div>
           </div>
 
           {/* Descriptions */}
           <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Descriptions</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Beskrivningar</h2>
 
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Short Description *
+                  Kort Beskrivning *
                 </label>
                 <input
                   type="text"
@@ -381,7 +381,7 @@ export default function EditProductPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Description *
+                  Fullständig Beskrivning *
                 </label>
                 <textarea
                   value={formData.description}
@@ -397,18 +397,18 @@ export default function EditProductPage() {
           {/* Images */}
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Product Images</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Produktbilder</h2>
               <button
                 type="button"
                 onClick={addImageField}
                 className="text-pink-500 hover:text-pink-600 text-sm font-medium"
               >
-                + Add Image
+                + Lägg till Bild
               </button>
             </div>
 
             <p className="text-sm text-gray-500 mb-4">
-              First image is the primary image. Click &quot;Upload&quot; to add an image or paste a URL directly.
+              Första bilden är huvudbilden. Klicka på &quot;Ladda upp&quot; för att lägga till en bild eller klistra in en URL direkt.
             </p>
 
             <div className="space-y-4">
@@ -428,9 +428,9 @@ export default function EditProductPage() {
                           }}
                           disabled={uploading}
                         />
-                        {uploading ? 'Uploading...' : '📷 Upload Image'}
+                        {uploading ? 'Laddar upp...' : '📷 Ladda upp Bild'}
                       </label>
-                      <span className="text-sm text-gray-500 self-center">or paste URL below</span>
+                      <span className="text-sm text-gray-500 self-center">eller klistra in URL nedan</span>
                     </div>
                     
                     {/* URL input */}
@@ -438,7 +438,7 @@ export default function EditProductPage() {
                       type="text"
                       value={image}
                       onChange={(e) => updateImage(index, e.target.value)}
-                      placeholder={index === 0 ? "Primary image URL" : "Additional image URL"}
+                      placeholder={index === 0 ? "Huvudbild URL" : "Extra bild URL"}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm"
                     />
                   </div>
@@ -476,8 +476,8 @@ export default function EditProductPage() {
 
           {/* Outer Fabrics */}
           <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Available Outer Fabrics</h2>
-            <p className="text-sm text-gray-500 mb-4">Select which outer fabrics are available for this product.</p>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Tillgängliga Yttertyger</h2>
+            <p className="text-sm text-gray-500 mb-4">Välj vilka yttertyger som är tillgängliga för denna produkt.</p>
 
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
               {outerFabrics.map((fabric) => (
@@ -515,8 +515,8 @@ export default function EditProductPage() {
           {/* Inner Fabrics */}
           {formData.hasLiningOption && (
             <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Available Inner Fabrics (Lining)</h2>
-              <p className="text-sm text-gray-500 mb-4">Select which inner fabrics are available for lining this product.</p>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Tillgängliga Innertyger (Föder)</h2>
+              <p className="text-sm text-gray-500 mb-4">Välj vilka innertyger som är tillgängliga som föder för denna produkt.</p>
 
               <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                 {innerFabrics.map((fabric) => (
@@ -558,14 +558,14 @@ export default function EditProductPage() {
               href="/admin/dashboard"
               className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
             >
-              Cancel
+              Avbryt
             </Link>
             <button
               type="submit"
               disabled={saving || uploading}
               className="px-6 py-2 bg-pink-500 text-white rounded-lg font-medium hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {saving ? 'Saving...' : 'Save Changes'}
+              {saving ? 'Sparar...' : 'Spara Ändringar'}
             </button>
           </div>
         </form>
