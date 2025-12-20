@@ -22,9 +22,9 @@ export default async function HomePage() {
             alt="Nonito produkter"
             fill
             sizes="100vw"
-            className="object-cover object-center scale-90"
+            className="object-cover"
             priority
-            quality={90}
+            quality={100}
           />
           {/* Overlay gradient for better text readability */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>
