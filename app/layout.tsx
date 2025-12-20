@@ -1,9 +1,17 @@
 import type { Metadata, Viewport } from 'next';
+import { Raleway } from 'next/font/google';
 import { CartProvider } from '@/context/CartContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CartSlideOver from '@/components/CartSlideOver';
 import '@/styles/globals.css';
+
+const raleway = Raleway({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-raleway',
+  display: 'swap',
+});
 
 // Get site URL with validation - fallback to default if invalid
 function getSiteUrl(): string {
@@ -98,13 +106,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="sv">
+    <html lang="sv" className={raleway.variable}>
       <head>
         {/* Preconnect to Stripe CDN for faster image loading */}
         <link rel="preconnect" href="https://files.stripe.com" />
         <link rel="dns-prefetch" href="https://files.stripe.com" />
       </head>
-      <body className="min-h-screen flex flex-col bg-offwhite">
+      <body className="min-h-screen flex flex-col bg-offwhite font-sans">
         <CartProvider>
           <Header />
           <main className="flex-1">{children}</main>
