@@ -26,8 +26,6 @@ export default async function HomePage() {
             priority
             quality={100}
           />
-          {/* Overlay gradient for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>
         </div>
 
         {/* Content */}
@@ -65,20 +63,6 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-        </div>
-
-        {/* Decorative elements with animation */}
-        <div className="absolute top-10 left-10 text-4xl opacity-70 hidden lg:block animate-float drop-shadow-lg">
-          🧸
-        </div>
-        <div className="absolute bottom-10 right-10 text-4xl opacity-70 hidden lg:block animate-float-delayed drop-shadow-lg">
-          💕
-        </div>
-        <div className="absolute top-1/2 right-20 text-3xl opacity-50 hidden lg:block animate-float-slow drop-shadow-lg">
-          🎀
-        </div>
-        <div className="absolute top-1/4 left-20 text-3xl opacity-50 hidden lg:block animate-float-delayed drop-shadow-lg">
-          ✨
         </div>
       </section>
 
