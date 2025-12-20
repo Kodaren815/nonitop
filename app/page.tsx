@@ -26,6 +26,8 @@ export default async function HomePage() {
             priority
             quality={100}
           />
+          {/* Darker overlay for better text readability */}
+          <div className="absolute inset-0 bg-black/30"></div>
         </div>
 
         {/* Content */}
