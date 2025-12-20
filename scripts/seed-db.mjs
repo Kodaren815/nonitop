@@ -126,7 +126,7 @@ async function seed() {
   try {
     // Create default admin user (CHANGE THIS PASSWORD IN PRODUCTION!)
     console.log('Creating admin user...');
-    const adminPassword = process.env.ADMIN_PASSWORD || 'changeme123';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'Nonito4Life!';
     const hashedPassword = await bcrypt.hash(adminPassword, 12);
     
     await sql`
