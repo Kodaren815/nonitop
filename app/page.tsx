@@ -18,7 +18,7 @@ export default async function HomePage() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/products/IMG_2784.jpeg"
+            src="/images/hero-image.jpeg"
             alt="Nonito produkter"
             fill
             sizes="100vw"
