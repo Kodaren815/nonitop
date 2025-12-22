@@ -14,6 +14,7 @@ export interface Product {
   price: number; // in SEK
   currency: string;
   size: string;
+  stock: number; // Available stock
   image: string;
   images?: string[]; // Multiple product images
   availableFabrics: string[]; // fabric IDs (outer fabrics)

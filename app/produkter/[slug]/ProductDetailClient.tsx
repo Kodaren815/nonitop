@@ -114,6 +114,15 @@ export default function ProductDetailClient({
               <span className="text-3xl font-bold text-pink-500">
                 {product.price} kr
               </span>
+              {product.stock > 0 ? (
+                <span className={`text-sm px-3 py-1 rounded-full ${product.stock <= 5 ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>
+                  {product.stock <= 5 ? `Endast ${product.stock} kvar` : `${product.stock} i lager`}
+                </span>
+              ) : (
+                <span className="text-sm px-3 py-1 rounded-full bg-red-100 text-red-700">
+                  Slut i lager
+                </span>
+              )}
             </div>
 
             <div className="prose prose-gray">
@@ -152,19 +161,24 @@ export default function ProductDetailClient({
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-pink-500 transition-colors"
+                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-pink-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   aria-label="Minska antal"
+                  disabled={quantity <= 1 || product.stock === 0}
                 >
                   -
                 </button>
                 <span className="w-12 text-center font-medium">{quantity}</span>
                 <button
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-pink-500 transition-colors"
+                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-pink-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   aria-label="Öka antal"
+                  disabled={quantity >= product.stock || product.stock === 0}
                 >
                   +
                 </button>
+                {quantity >= product.stock && product.stock > 0 && (
+                  <span className="text-xs text-orange-600">Max antal</span>
+                )}
               </div>
             </div>
 
@@ -193,16 +207,17 @@ export default function ProductDetailClient({
                 onClick={handleAddToCart}
                 className={`btn-secondary flex-1 ${
                   addedToCart ? 'bg-green-50 border-green-500 text-green-600' : ''
-                }`}
-                disabled={addedToCart}
+                } ${product.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={addedToCart || product.stock === 0}
               >
-                {addedToCart ? '✓ Tillagd i varukorgen' : 'Lägg i varukorg'}
+                {product.stock === 0 ? 'Slut i lager' : addedToCart ? '✓ Tillagd i varukorgen' : 'Lägg i varukorg'}
               </button>
               <button
                 onClick={handleBuyNow}
-                className="btn-primary flex-1"
+                className={`btn-primary flex-1 ${product.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={product.stock === 0}
               >
-                Köp nu
+                {product.stock === 0 ? 'Slut i lager' : 'Köp nu'}
               </button>
             </div>
 
