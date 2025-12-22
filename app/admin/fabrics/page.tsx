@@ -11,7 +11,6 @@ interface Fabric {
   name: string;
   imageUrl: string;
   type: 'outer' | 'inner';
-  isActive: boolean;
   sortOrder: number;
 }
 
@@ -173,22 +172,6 @@ export default function FabricsPage() {
       setError('Failed to update fabric');
     } finally {
       setSaving(false);
-    }
-  }
-
-  async function toggleFabricStatus(fabric: Fabric) {
-    try {
-      const res = await fetch(`/api/admin/fabrics/${fabric.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ isActive: !fabric.isActive }),
-      });
-      if (res.ok) {
-        await loadFabrics();
-      }
-    } catch (err) {
-      setError('Failed to update fabric');
     }
   }
 
@@ -464,7 +447,7 @@ export default function FabricsPage() {
             {outerFabrics.map((fabric) => (
               <div 
                 key={fabric.id} 
-                className={`bg-white rounded-lg shadow p-3 cursor-pointer hover:shadow-md transition-shadow ${!fabric.isActive ? 'opacity-60 bg-gray-50' : ''}`}
+                className="bg-white rounded-lg shadow p-3 cursor-pointer hover:shadow-md transition-shadow"
               >
                 <div className="aspect-square relative rounded overflow-hidden bg-gray-100 mb-2">
                   {fabric.imageUrl ? (
@@ -488,13 +471,6 @@ export default function FabricsPage() {
                     className="text-xs text-pink-600 hover:text-pink-800"
                   >
                     Redigera
-                  </button>
-                  <span className="text-gray-300">|</span>
-                  <button
-                    onClick={() => toggleFabricStatus(fabric)}
-                    className={`text-xs ${fabric.isActive ? 'text-orange-600 hover:text-orange-800' : 'text-green-600 hover:text-green-800'}`}
-                  >
-                    {fabric.isActive ? 'Inaktivera' : 'Aktivera'}
                   </button>
                   <span className="text-gray-300">|</span>
                   {deleteConfirm === fabric.id ? (
@@ -535,7 +511,7 @@ export default function FabricsPage() {
             {innerFabrics.map((fabric) => (
               <div 
                 key={fabric.id} 
-                className={`bg-white rounded-lg shadow p-3 cursor-pointer hover:shadow-md transition-shadow ${!fabric.isActive ? 'opacity-60 bg-gray-50' : ''}`}
+                className="bg-white rounded-lg shadow p-3 cursor-pointer hover:shadow-md transition-shadow"
               >
                 <div className="aspect-square relative rounded overflow-hidden bg-gray-100 mb-2">
                   {fabric.imageUrl ? (
@@ -559,13 +535,6 @@ export default function FabricsPage() {
                     className="text-xs text-pink-600 hover:text-pink-800"
                   >
                     Redigera
-                  </button>
-                  <span className="text-gray-300">|</span>
-                  <button
-                    onClick={() => toggleFabricStatus(fabric)}
-                    className={`text-xs ${fabric.isActive ? 'text-orange-600 hover:text-orange-800' : 'text-green-600 hover:text-green-800'}`}
-                  >
-                    {fabric.isActive ? 'Inaktivera' : 'Aktivera'}
                   </button>
                   <span className="text-gray-300">|</span>
                   {deleteConfirm === fabric.id ? (
