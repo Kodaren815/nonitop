@@ -41,6 +41,7 @@ Perfekt för nyblivna föräldrar eller som en babyshower-present.`,
     price: 500,
     currency: 'SEK',
     size: 'ca 28 x 17 cm',
+    stock: 10,
     image: '/images/products/miniskotvaska.jpeg',
     images: [
       '/images/products/miniskotvaska.jpeg',
@@ -64,6 +65,7 @@ Storlek: ca 11 x 8 cm. Mini pouchen sys för hand och mindre avvikelser i storle
     price: 150,
     currency: 'SEK',
     size: 'ca 11 x 8 cm',
+    stock: 10,
     image: '/images/products/mini-pouch.jpeg',
     images: [
       '/images/products/mini-pouch.jpeg',
@@ -87,6 +89,7 @@ Storlek: Ca 24 x 19 cm. Alla mina necessärer sys för hand och mindre avvikelse
     price: 350,
     currency: 'SEK',
     size: 'ca 24 x 19 cm',
+    stock: 10,
     image: '/images/products/necessar.jpeg',
     images: [
       '/images/products/necessar.jpeg',
@@ -110,6 +113,7 @@ Alla puffkorgar är handgjorda och mindre avvikelser i storlek kan förekomma.`,
     price: 250,
     currency: 'SEK',
     size: 'ca 15 x 10 cm',
+    stock: 10,
     image: '/images/products/puffkorg.jpeg',
     images: [
       '/images/products/puffkorg.jpeg',
