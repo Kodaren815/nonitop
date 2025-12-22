@@ -250,3 +250,49 @@ export async function validateProductSelection(
     return { valid: false, error: 'Validation error' };
   }
 }
+
+/**
+ * Deduct stock for a product after successful order
+ * Returns true if stock was successfully deducted, false otherwise
+ */
+export async function deductProductStock(
+  productSlug: string,
+  quantity: number
+): Promise<{ success: boolean; error?: string; newStock?: number }> {
+  const sql = getSql();
+  if (!sql) return { success: false, error: 'Database not available' };
+  
+  try {
+    // First check current stock
+    const checkResult = await sql`
+      SELECT stock FROM products WHERE slug = ${productSlug} LIMIT 1
+    `;
+    
+    if (checkResult.length === 0) {
+      return { success: false, error: 'Product not found' };
+    }
+    
+    const currentStock = checkResult[0].stock;
+    
+    if (currentStock < quantity) {
+      return { success: false, error: 'Insufficient stock' };
+    }
+    
+    // Deduct stock
+    const result = await sql`
+      UPDATE products 
+      SET stock = stock - ${quantity}, updated_at = NOW()
+      WHERE slug = ${productSlug} AND stock >= ${quantity}
+      RETURNING stock
+    `;
+    
+    if (result.length === 0) {
+      return { success: false, error: 'Failed to update stock - concurrent modification' };
+    }
+    
+    return { success: true, newStock: result[0].stock };
+  } catch (error) {
+    console.error('Error deducting stock:', error);
+    return { success: false, error: 'Database error' };
+  }
+}

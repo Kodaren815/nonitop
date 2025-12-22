@@ -196,12 +196,43 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (savedCart) {
       try {
         const items = JSON.parse(savedCart);
-        dispatch({ type: 'LOAD_CART', payload: items });
+        // Validate that items is an array with proper structure
+        if (Array.isArray(items)) {
+          const validItems = items.filter((item): item is CartItem => 
+            item &&
+            typeof item === 'object' &&
+            typeof item.productId === 'string' &&
+            typeof item.selectedFabric === 'string' &&
+            typeof item.quantity === 'number' &&
+            item.quantity > 0
+          );
+          dispatch({ type: 'LOAD_CART', payload: validItems });
+        }
       } catch (e) {
         console.error('Failed to load cart from storage:', e);
+        // Clear corrupted cart data
+        localStorage.removeItem(CART_STORAGE_KEY);
       }
     }
   }, []);
+
+  // Clean up invalid cart items once products are loaded
+  useEffect(() => {
+    if (!isLoading && products.length > 0 && state.items.length > 0) {
+      // Filter out items that reference non-existent products or fabrics
+      const validItems = state.items.filter(item => {
+        const product = products.find(p => p.id === item.productId || p.slug === item.productId);
+        const fabric = [...fabrics.outer, ...fabrics.inner].find(f => f.id === item.selectedFabric);
+        return product && fabric;
+      });
+      
+      // If some items were invalid, update the cart
+      if (validItems.length !== state.items.length) {
+        console.log(`Cleaned up ${state.items.length - validItems.length} invalid cart items`);
+        dispatch({ type: 'LOAD_CART', payload: validItems });
+      }
+    }
+  }, [isLoading, products, fabrics, state.items]);
 
   // Save cart to localStorage when items change
   useEffect(() => {
@@ -237,7 +268,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       .filter((item): item is CartItemWithProduct => item !== null);
   }, [state.items, products, fabrics]);
 
-  const totalItems = state.items.reduce((sum, item) => sum + item.quantity, 0);
+  // Calculate total items from itemsWithProducts to ensure consistency
+  // This prevents showing incorrect count when products haven't loaded or items are invalid
+  const totalItems = itemsWithProducts.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = itemsWithProducts.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
     0

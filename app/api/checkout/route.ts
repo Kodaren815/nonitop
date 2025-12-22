@@ -240,6 +240,7 @@ export async function POST(request: NextRequest) {
 
       // Build metadata for order tracking
       orderMetadata[`item_${index}_product`] = product.name;
+      orderMetadata[`item_${index}_productSlug`] = product.slug;
       orderMetadata[`item_${index}_fabric`] = fabric.name;
       if (lining) {
         orderMetadata[`item_${index}_lining`] = lining.name;
