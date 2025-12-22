@@ -103,7 +103,7 @@ export default function CartSlideOver() {
                   {/* Product Image */}
                   <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
                     <Image
-                      src={item.fabricDetails.image}
+                      src={item.product.image || item.product.images?.[0] || item.fabricDetails.image}
                       alt={item.product.name}
                       fill
                       sizes="80px"

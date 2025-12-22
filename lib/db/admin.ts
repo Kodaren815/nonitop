@@ -526,3 +526,190 @@ export async function setPrimaryImage(productId: number, imageId: number): Promi
     return { success: false, error: 'Failed to set primary image' };
   }
 }
+
+// ==========================================
+// Fabric Management Functions
+// ==========================================
+
+export interface AdminFabric {
+  id: number;
+  slug: string;
+  name: string;
+  imageUrl: string;
+  type: 'outer' | 'inner';
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateFabricData {
+  slug: string;
+  name: string;
+  imageUrl: string;
+  type: 'outer' | 'inner';
+}
+
+export interface UpdateFabricData {
+  slug?: string;
+  name?: string;
+  imageUrl?: string;
+  type?: 'outer' | 'inner';
+  isActive?: boolean;
+  sortOrder?: number;
+}
+
+/**
+ * Get single fabric by ID
+ */
+export async function getFabricById(id: number): Promise<AdminFabric | null> {
+  const sql = getSql();
+  if (!sql) return null;
+  
+  try {
+    const fabrics = await sql`
+      SELECT 
+        id, 
+        slug, 
+        name, 
+        image_url as "imageUrl", 
+        fabric_type as type,
+        is_active as "isActive",
+        sort_order as "sortOrder",
+        created_at as "createdAt",
+        updated_at as "updatedAt"
+      FROM fabrics
+      WHERE id = ${id}
+      LIMIT 1
+    `;
+    
+    return fabrics.length > 0 ? fabrics[0] as AdminFabric : null;
+  } catch (error) {
+    console.error('Error getting fabric:', error);
+    return null;
+  }
+}
+
+/**
+ * Create a new fabric
+ */
+export async function createFabric(data: CreateFabricData): Promise<{ success: boolean; id?: number; error?: string }> {
+  const sql = getSql();
+  if (!sql) {
+    return { success: false, error: 'Database not available' };
+  }
+  
+  try {
+    // Check for duplicate slug
+    const existing = await sql`
+      SELECT id FROM fabrics WHERE slug = ${data.slug} LIMIT 1
+    `;
+    if (existing.length > 0) {
+      return { success: false, error: 'A fabric with this slug already exists' };
+    }
+
+    // Get max sort order for this type
+    const maxOrder = await sql`
+      SELECT COALESCE(MAX(sort_order), -1) as max FROM fabrics WHERE fabric_type = ${data.type}
+    `;
+    const sortOrder = maxOrder[0].max + 1;
+
+    // Insert fabric
+    const result = await sql`
+      INSERT INTO fabrics (slug, name, image_url, fabric_type, sort_order)
+      VALUES (${data.slug}, ${data.name}, ${data.imageUrl}, ${data.type}, ${sortOrder})
+      RETURNING id
+    `;
+
+    return { success: true, id: result[0].id };
+  } catch (error) {
+    console.error('Create fabric error:', error);
+    return { success: false, error: 'Failed to create fabric' };
+  }
+}
+
+/**
+ * Update an existing fabric
+ */
+export async function updateFabric(id: number, data: UpdateFabricData): Promise<{ success: boolean; error?: string }> {
+  const sql = getSql();
+  if (!sql) {
+    return { success: false, error: 'Database not available' };
+  }
+  
+  try {
+    // Check fabric exists
+    const existing = await sql`
+      SELECT id FROM fabrics WHERE id = ${id} LIMIT 1
+    `;
+    if (existing.length === 0) {
+      return { success: false, error: 'Fabric not found' };
+    }
+
+    if (data.name !== undefined) {
+      await sql`UPDATE fabrics SET name = ${data.name} WHERE id = ${id}`;
+    }
+    if (data.imageUrl !== undefined) {
+      await sql`UPDATE fabrics SET image_url = ${data.imageUrl} WHERE id = ${id}`;
+    }
+    if (data.type !== undefined) {
+      await sql`UPDATE fabrics SET fabric_type = ${data.type} WHERE id = ${id}`;
+    }
+    if (data.isActive !== undefined) {
+      await sql`UPDATE fabrics SET is_active = ${data.isActive} WHERE id = ${id}`;
+    }
+    if (data.sortOrder !== undefined) {
+      await sql`UPDATE fabrics SET sort_order = ${data.sortOrder} WHERE id = ${id}`;
+    }
+    if (data.slug !== undefined) {
+      // Check slug doesn't conflict
+      const conflict = await sql`
+        SELECT id FROM fabrics WHERE slug = ${data.slug} AND id != ${id} LIMIT 1
+      `;
+      if (conflict.length > 0) {
+        return { success: false, error: 'Slug already in use' };
+      }
+      await sql`UPDATE fabrics SET slug = ${data.slug} WHERE id = ${id}`;
+    }
+
+    // Update timestamp
+    await sql`UPDATE fabrics SET updated_at = NOW() WHERE id = ${id}`;
+
+    return { success: true };
+  } catch (error) {
+    console.error('Update fabric error:', error);
+    return { success: false, error: 'Failed to update fabric' };
+  }
+}
+
+/**
+ * Delete a fabric (soft delete by setting inactive, or hard delete)
+ */
+export async function deleteFabric(id: number, hard: boolean = false): Promise<{ success: boolean; error?: string }> {
+  const sql = getSql();
+  if (!sql) {
+    return { success: false, error: 'Database not available' };
+  }
+  
+  try {
+    if (hard) {
+      // Check if fabric is used by any products
+      const usedBy = await sql`
+        SELECT COUNT(*) as count FROM product_fabrics WHERE fabric_id = ${id}
+      `;
+      if (usedBy[0].count > 0) {
+        return { success: false, error: 'Cannot delete fabric that is used by products. Remove it from all products first or use soft delete.' };
+      }
+      
+      // Hard delete
+      await sql`DELETE FROM fabrics WHERE id = ${id}`;
+    } else {
+      // Soft delete
+      await sql`UPDATE fabrics SET is_active = false, updated_at = NOW() WHERE id = ${id}`;
+    }
+    return { success: true };
+  } catch (error) {
+    console.error('Delete fabric error:', error);
+    return { success: false, error: 'Failed to delete fabric' };
+  }
+}

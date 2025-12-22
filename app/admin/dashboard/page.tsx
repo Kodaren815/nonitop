@@ -321,7 +321,15 @@ export default function AdminDashboard() {
 
         {/* Fabrics Section */}
         <div className="mt-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Tillgängliga Tyger</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-gray-900">Tillgängliga Tyger</h2>
+            <Link
+              href="/admin/fabrics"
+              className="text-pink-500 hover:text-pink-600 text-sm font-medium"
+            >
+              Hantera tyger →
+            </Link>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {fabrics.map((fabric) => (
               <div key={fabric.id} className="bg-white rounded-lg shadow p-3">
