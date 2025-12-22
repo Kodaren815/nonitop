@@ -90,6 +90,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   // Get available fabrics for this product
   const availableFabrics = outerFabrics.filter(f => product.availableFabrics.includes(f.id));
+  
+  // Filter inner fabrics: if product has specific inner fabrics assigned, use those; otherwise use all
+  const availableInnerFabrics = product.availableInnerFabrics && product.availableInnerFabrics.length > 0
+    ? innerFabrics.filter(f => product.availableInnerFabrics!.includes(f.id))
+    : innerFabrics;
+  
   const jsonLd = generateProductJsonLd(product);
 
   return (
@@ -103,7 +109,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         product={product}
         availableFabrics={availableFabrics}
         outerFabrics={outerFabrics}
-        innerFabrics={innerFabrics}
+        innerFabrics={availableInnerFabrics}
       />
     </>
   );

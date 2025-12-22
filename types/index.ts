@@ -16,7 +16,8 @@ export interface Product {
   size: string;
   image: string;
   images?: string[]; // Multiple product images
-  availableFabrics: string[]; // fabric IDs
+  availableFabrics: string[]; // fabric IDs (outer fabrics)
+  availableInnerFabrics?: string[]; // inner fabric IDs
   hasLiningOption: boolean;
   category: 'mini' | 'accessories' | 'storage';
   stripeProductId?: string; // Stripe product ID

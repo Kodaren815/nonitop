@@ -62,9 +62,13 @@ export async function getAllProducts(): Promise<Product[]> {
           '[]'::json
         ) as images,
         COALESCE(
-          (SELECT json_agg(f.slug) FROM product_fabrics pf JOIN fabrics f ON pf.fabric_id = f.id WHERE pf.product_id = p.id),
+          (SELECT json_agg(f.slug) FROM product_fabrics pf JOIN fabrics f ON pf.fabric_id = f.id WHERE pf.product_id = p.id AND (pf.fabric_role = 'outer' OR pf.fabric_role IS NULL)),
           '[]'::json
-        ) as "availableFabrics"
+        ) as "availableFabrics",
+        COALESCE(
+          (SELECT json_agg(f.slug) FROM product_fabrics pf JOIN fabrics f ON pf.fabric_id = f.id WHERE pf.product_id = p.id AND pf.fabric_role = 'inner'),
+          '[]'::json
+        ) as "availableInnerFabrics"
       FROM products p
       WHERE p.is_active = true
       ORDER BY p.created_at DESC
@@ -75,6 +79,7 @@ export async function getAllProducts(): Promise<Product[]> {
       id: p.slug, // Use slug as ID for compatibility
       images: p.images || [],
       availableFabrics: p.availableFabrics || [],
+      availableInnerFabrics: p.availableInnerFabrics || [],
     })) as Product[];
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -113,9 +118,13 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
           '[]'::json
         ) as images,
         COALESCE(
-          (SELECT json_agg(f.slug) FROM product_fabrics pf JOIN fabrics f ON pf.fabric_id = f.id WHERE pf.product_id = p.id),
+          (SELECT json_agg(f.slug) FROM product_fabrics pf JOIN fabrics f ON pf.fabric_id = f.id WHERE pf.product_id = p.id AND (pf.fabric_role = 'outer' OR pf.fabric_role IS NULL)),
           '[]'::json
-        ) as "availableFabrics"
+        ) as "availableFabrics",
+        COALESCE(
+          (SELECT json_agg(f.slug) FROM product_fabrics pf JOIN fabrics f ON pf.fabric_id = f.id WHERE pf.product_id = p.id AND pf.fabric_role = 'inner'),
+          '[]'::json
+        ) as "availableInnerFabrics"
       FROM products p
       WHERE p.slug = ${slug} AND p.is_active = true
       LIMIT 1
@@ -129,6 +138,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       id: p.slug,
       images: p.images || [],
       availableFabrics: p.availableFabrics || [],
+      availableInnerFabrics: p.availableInnerFabrics || [],
     } as Product;
   } catch (error) {
     console.error('Error fetching product:', error);

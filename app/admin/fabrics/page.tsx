@@ -464,7 +464,7 @@ export default function FabricsPage() {
             {outerFabrics.map((fabric) => (
               <div 
                 key={fabric.id} 
-                className={`bg-white rounded-lg shadow p-3 ${!fabric.isActive ? 'opacity-50' : ''}`}
+                className={`bg-white rounded-lg shadow p-3 cursor-pointer hover:shadow-md transition-shadow ${!fabric.isActive ? 'opacity-60 bg-gray-50' : ''}`}
               >
                 <div className="aspect-square relative rounded overflow-hidden bg-gray-100 mb-2">
                   {fabric.imageUrl ? (
@@ -535,7 +535,7 @@ export default function FabricsPage() {
             {innerFabrics.map((fabric) => (
               <div 
                 key={fabric.id} 
-                className={`bg-white rounded-lg shadow p-3 ${!fabric.isActive ? 'opacity-50' : ''}`}
+                className={`bg-white rounded-lg shadow p-3 cursor-pointer hover:shadow-md transition-shadow ${!fabric.isActive ? 'opacity-60 bg-gray-50' : ''}`}
               >
                 <div className="aspect-square relative rounded overflow-hidden bg-gray-100 mb-2">
                   {fabric.imageUrl ? (
