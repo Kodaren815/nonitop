@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
 
 interface OrderDetails {
   id: string;
@@ -35,6 +36,8 @@ function ConfirmationContent() {
   const [order, setOrder] = useState<OrderDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { clearCart } = useCart();
+  const cartCleared = useRef(false);
 
   useEffect(() => {
     if (sessionId) {
@@ -45,6 +48,11 @@ function ConfirmationContent() {
             setError(data.error);
           } else {
             setOrder(data);
+            // Clear cart after successful order (only once)
+            if (!cartCleared.current) {
+              clearCart();
+              cartCleared.current = true;
+            }
           }
           setLoading(false);
         })
@@ -52,13 +60,10 @@ function ConfirmationContent() {
           setError('Kunde inte hämta orderinformation');
           setLoading(false);
         });
-
-      // Clear cart after successful order
-      localStorage.removeItem('nonito-cart');
     } else {
       setLoading(false);
     }
-  }, [sessionId]);
+  }, [sessionId, clearCart]);
 
   if (loading) {
     return (

@@ -30,6 +30,7 @@ export default function CartSlideOver() {
             quantity: item.quantity,
             selectedFabric: item.selectedFabric,
             selectedLining: item.selectedLining,
+            notes: item.notes,
           })),
         }),
       });
