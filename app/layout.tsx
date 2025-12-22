@@ -39,6 +39,9 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  icons: {
+    icon: '/favicon.svg',
+  },
   title: {
     default: 'Nonito - Söta och praktiska saker för dig och mini',
     template: '%s | Nonito',
